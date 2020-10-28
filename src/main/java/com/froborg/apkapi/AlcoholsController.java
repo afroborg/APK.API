@@ -1,9 +1,8 @@
 package com.froborg.apkapi;
 
-import java.util.List;
+import java.util.HashMap;
 
-import com.froborg.apkapi.models.Alcohol;
-import com.froborg.apkapi.repsoitories.IAlcoholRepository;
+import com.froborg.apkapi.services.AlcoholService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,15 +15,27 @@ import org.springframework.web.bind.annotation.RestController;
 public class AlcoholsController {
 
     @Autowired
-    private IAlcoholRepository alcoholRepository;
+    private AlcoholService _service;
 
     @GetMapping("/alcohols")
-    public List<Alcohol> AllAlcohols(@RequestParam(name = "page", defaultValue = "1") int page,
-            @RequestParam(name = "limit", defaultValue = "100") int limit) {
+    public HashMap<String, Object> AllAlcohols(@RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "limit", defaultValue = "100") int limit,
+            @RequestParam(name = "categories", defaultValue = "") String[] categories) {
 
-        var alcohols = alcoholRepository.findAll();
-        // return alcohols.get(0).
-        return alcohols.subList((page - 1) * limit, page * limit);
+        var alcohols = categories.length > 0 ? _service.getByCategories(page, limit, categories)
+                : _service.getPaged(page, limit);
+
+        var map = new HashMap<String, Object>();
+        
+        var paginationData = new HashMap<String, Integer>();
+
+        paginationData.put("totalRecords", (int)alcohols.getTotalElements());
+        paginationData.put("currentPage", alcohols.getNumber());
+        paginationData.put("totalPages", alcohols.getTotalPages());
+
+        map.put("meta", paginationData);
+        map.put("data", alcohols.getContent());
+        return map;
 
     }
 }
