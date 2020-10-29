@@ -19,17 +19,17 @@ public class AlcoholsController {
 
     @GetMapping("/alcohols")
     public HashMap<String, Object> AllAlcohols(@RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "limit", defaultValue = "100") int limit,
+            @RequestParam(name = "limit", defaultValue = "30") int limit,
             @RequestParam(name = "categories", defaultValue = "") String[] categories) {
 
         var alcohols = categories.length > 0 ? _service.getByCategories(page, limit, categories)
                 : _service.getPaged(page, limit);
 
         var map = new HashMap<String, Object>();
-        
+
         var paginationData = new HashMap<String, Integer>();
 
-        paginationData.put("totalRecords", (int)alcohols.getTotalElements());
+        paginationData.put("totalRecords", (int) alcohols.getTotalElements());
         paginationData.put("currentPage", alcohols.getNumber());
         paginationData.put("totalPages", alcohols.getTotalPages());
 
