@@ -8,6 +8,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
 public interface IAlcoholRepository extends MongoRepository<Alcohol, String> {
-    @Query(value = "{ 'categories' : {$all : [?0] }}")
+    @Query(value = "{ 'categories' : {$in : [?0] }}")
     public Page<Alcohol> containsCategories(String[] categories, Pageable pageable);
 }
